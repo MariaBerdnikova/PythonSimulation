@@ -1,0 +1,122 @@
+from __future__ import division #1
+import numpy as np
+import seaborn as sns
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+m1=20 #mass of first body
+m2=200 #mass of second body
+m3=0 #mass of 3d body
+M=m1/(m1+m2)# mass of center of mass
+
+t0=0
+G=-6.6726e-11
+x1=-1#3
+y1=1000 #5
+y2=2 #6
+x3=-1 #7
+y3=1  #8
+vx1=1 #9a
+vy1=1#10
+v02x=3#11
+v02y=4  #12
+v03x=0 #13
+v03y=0  #14
+    #15
+ht=0.1
+x=[]
+y=[]
+t=[]
+
+fig=plt.figure()
+ax=plt.axes(xlim=(-20,1),ylim=(970,1130))
+line, = ax.plot([], [], lw=2)
+t0=0
+
+# initialization function
+def init():
+    # creating an empty plot/frame
+    line.set_data([], [])
+    return line,
+
+
+def u2v1x(x1,y1,vx1,vy1):
+    x1d=vx1
+    return(x1d)
+
+def u8v2y(x1,y1,vx1,vy1):
+    y1d=vy1
+    return(y1d)
+def x2tag(x1,y1,vx1,vy1):
+    x2d=2*vy1+x1-M/((x1-1+M)**2+y1**2)**1.5-(1-M)*(x1+M)/((((1+M)**2)**2+y1**2)*1.5)
+    return x2d
+
+def y2tag(x1,y1,vx1,vy1):
+    y2d=-2*vx1+y1*(M/((x1-1+M)**2+y1**2)**1.5-(1-M)*y1/((((1+M)**2)**2+y1**2)*1.5))
+    return y2d
+def animate(i):
+    global x1 #3,
+    global y1 #5
+    y2=2 #6
+    x3=-1 #7
+    y3=1  #8
+    global vx1 #9a
+    global vy1#10
+    v02x=3#11
+    v02y=4  #12
+    v03x=0 #13
+    v03y=0  #14
+    #15
+    ht=0.1
+    t0=1
+ 
+    #for i in range(0,300):
+    k11=u2v1x(x1,y1,vx1,vy1)*ht
+    k12=u8v2y(x1,y1,vx1,vy1)*ht
+    k13=x2tag(x1,y1,vx1,vy1)*ht
+    k14=y2tag(x1,y1,vx1,vy1)*ht
+   
+    k21=u2v1x(x1+0.5*k11,y1+0.5*k12,vx1+0.5*k13,vy1+0.5*k13)*ht
+    k22=u8v2y(x1+0.5*k11,y1+0.5*k12,vx1+0.5*k13,vy1+0.5*k13)*ht
+    k23=x2tag(x1+0.5*k11,y1+0.5*k12,vx1+0.5*k13,vy1+0.5*k13)*ht
+    k24=y2tag(x1+0.5*k11,y1+0.5*k12,vx1+0.5*k13,vy1+0.5*k13)*ht
+   
+   
+    k31=u2v1x(x1+0.5*k21,y1+0.5*k22,vx1+0.5*k23,vy1+0.5*k24)*ht
+    k32=u8v2y(x1+0.5*k21,y1+0.5*k22,vx1+0.5*k23,vy1+0.5*k24)*ht
+    k33=x2tag(x1+0.5*k21,y1+0.5*k22,vx1+0.5*k23,vy1+0.5*k24)*ht
+    k34=y2tag(x1+0.5*k21,y1+0.5*k22,vx1+0.5*k23,vy1+0.5*k24)*ht
+   
+    k41=u2v1x(x1+0.5*k31,y1+0.5*k32,vx1+0.5*k33,vy1+0.5*k34)*ht
+    k42=u8v2y(x1+0.5*k31,y1+0.5*k32,vx1+0.5*k33,vy1+0.5*k34)*ht
+    k43=x2tag(x1+0.5*k31,y1+0.5*k32,vx1+0.5*k33,vy1+0.5*k34)*ht
+    k44=y2tag(x1+0.5*k31,y1+0.5*k32,vx1+0.5*k33,vy1+0.5*k34)*ht
+   
+    x1+=(1/6)*(k11+2*(k21+k31)+k41)
+    y1+=(1/6)*(k12+2*(k22+k32)+k42)
+    vx1+=(1/6)*(k13+2*(k23+k33)+k43)
+    vy1+=(1/6)*(k14+2*(k24+k34)+k44)
+    t0=t0+ht
+    x.append(x1)
+    y.append(y1)
+    #print (y)
+    t.append(t0)
+    line.set_data(x[:i],y[:i])
+    #print(x)
+    #ax.clear()
+    #ax.plot(x,y)
+ 
+    return line,
+
+
+
+ 
+
+        #print(x)
+#x,y,t=rungekutta(x1,y1,v01x,v01y)
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=300, interval=10, blit=True)
+
+anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+
+plt.show()            
